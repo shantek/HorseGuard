@@ -27,17 +27,18 @@ public class HorseTabCompleter implements TabCompleter {
         }
 
         if (args.length == 1) {
-            // Suggest "trust", "untrust", "trustlist" for the first argument
+            // Suggest "trust", "untrust", "trustlist", "transfer" for the first argument
             List<String> subcommands = new ArrayList<>();
             subcommands.add("trust");
             subcommands.add("untrust");
             subcommands.add("trustlist");
+            subcommands.add("transfer");
             return subcommands;
         } else if (args.length == 2) {
             String subCommand = args[0].toLowerCase();
 
-            if (subCommand.equals("trust")) {
-                // Populate with online players for "/horse trust <playername>"
+            if (subCommand.equals("trust") || subCommand.equals("transfer")) {
+                // Populate with online players for "/horse trust <playername>" and "/horse transfer <playername>"
                 List<String> playerNames = new ArrayList<>();
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                     playerNames.add(onlinePlayer.getName());
