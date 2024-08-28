@@ -43,13 +43,16 @@ public class Listeners implements Listener {
 
             UUID horseUUID = horse.getUniqueId();
             UUID playerUUID = player.getUniqueId();
+            UUID ownerUUID = helperFunctions.getHorseOwner(horseUUID);
 
             if (!helperFunctions.isOwner(player, horse) && !helperFunctions.isPlayerTrusted(horseUUID, playerUUID)) {
                 event.setCancelled(true);
-                player.sendMessage("You cannot interact with this horse.");
+                String ownerName = ownerUUID != null ? Bukkit.getOfflinePlayer(ownerUUID).getName() : "Unknown";
+                player.sendMessage("This horse is owned by " + ownerName + ". You cannot interact with it.");
             }
         }
     }
+
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
