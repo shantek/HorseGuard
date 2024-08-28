@@ -48,9 +48,14 @@ jobs:
         if: env.TAG_EXISTS == 'false'
         id: fetch_commits
         run: |
-          git fetch --tags
-          LAST_TAG=$(git describe --tags --abbrev=0 $(git rev-list --tags --max-count=1))
-          COMMIT_MESSAGES=$(git log $LAST_TAG..HEAD --pretty=format:"- %s")
+          git fetch --tags --unshallow || true
+          LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            echo "No previous tags found, using the entire history."
+            COMMIT_MESSAGES=$(git log --pretty=format:"- %s")
+          else
+            COMMIT_MESSAGES=$(git log $LAST_TAG..HEAD --pretty=format:"- %s")
+          fi
           echo "COMMIT_MESSAGES<<EOF" >> $GITHUB_ENV
           echo "Full Changelog:" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
