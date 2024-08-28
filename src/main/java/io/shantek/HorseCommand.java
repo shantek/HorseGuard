@@ -85,7 +85,7 @@ public class HorseCommand implements CommandExecutor {
         }
 
         helperFunctions.addTrustedPlayer(horse.getUniqueId(), targetUUID);
-        player.sendMessage(target.getName() + " can now ride and leash your horse.");
+        player.sendMessage(target.getName() + " can now ride and lead your horse.");
     }
 
     private void handleUntrust(Player player, String[] args) {
@@ -113,7 +113,7 @@ public class HorseCommand implements CommandExecutor {
         }
 
         helperFunctions.removeTrustedPlayer(horse.getUniqueId(), targetUUID);
-        player.sendMessage(target.getName() + " can no longer ride or leash your horse.");
+        player.sendMessage(target.getName() + " can no longer ride or lead your horse.");
     }
 
     private void handleTrustList(Player player) {
