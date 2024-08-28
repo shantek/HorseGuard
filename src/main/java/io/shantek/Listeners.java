@@ -53,7 +53,6 @@ public class Listeners implements Listener {
         }
     }
 
-
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Horse horse) {
