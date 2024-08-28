@@ -1,5 +1,6 @@
 package io.shantek;
 
+import io.shantek.functions.HelperFunctions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;

@@ -1,5 +1,6 @@
 package io.shantek;
 
+import io.shantek.functions.HelperFunctions;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
