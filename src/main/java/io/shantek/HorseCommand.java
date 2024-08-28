@@ -9,14 +9,14 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
-import java.util.HashSet;
+import java.util.List;
 
 public class HorseCommand implements CommandExecutor {
 
-    private final HorseGuard horseGuard;
+    private final HelperFunctions helperFunctions;
 
     public HorseCommand(HorseGuard horseGuard) {
-        this.horseGuard = horseGuard;
+        this.helperFunctions = new HelperFunctions(horseGuard);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class HorseCommand implements CommandExecutor {
                 handleTrustList(player);
                 break;
             default:
-                player.sendMessage("Unknown subcommand. Usage: /horse <trust | untrust | trustlist> [playername]");
+                player.sendMessage("Unknown subcommand. Usage: /horse <trust|untrust|trustlist> [playername]");
                 break;
         }
 
@@ -65,33 +65,23 @@ public class HorseCommand implements CommandExecutor {
             return;
         }
 
-        if (!(player.getVehicle() instanceof Horse horse)) {
-            player.sendMessage("You must be riding a horse to use this command.");
-            return;
-        }
-
-        UUID horseUUID = horse.getUniqueId();
-        UUID ownerUUID = horseGuard.getHorseOwner(horseUUID);
-
-        if (ownerUUID == null || !ownerUUID.equals(player.getUniqueId())) {
-            player.sendMessage("You are not the owner of this horse.");
-            return;
-        }
+        Horse horse = helperFunctions.getHorsePlayerOwns(player);
+        if (horse == null) return;
 
         UUID targetUUID = target.getUniqueId();
 
         // Prevent the owner from trusting themselves
-        if (ownerUUID.equals(targetUUID)) {
+        if (player.getUniqueId().equals(targetUUID)) {
             player.sendMessage("You cannot trust yourself on a horse you own.");
             return;
         }
 
-        if (horseGuard.isPlayerTrusted(horseUUID, targetUUID)) {
+        if (helperFunctions.isPlayerTrusted(horse.getUniqueId(), targetUUID)) {
             player.sendMessage(target.getName() + " is already trusted with your horse.");
             return;
         }
 
-        horseGuard.addTrustedPlayer(horseUUID, targetUUID);
+        helperFunctions.addTrustedPlayer(horse.getUniqueId(), targetUUID);
         player.sendMessage(target.getName() + " can now ride and leash your horse.");
     }
 
@@ -109,61 +99,31 @@ public class HorseCommand implements CommandExecutor {
             return;
         }
 
-        if (!(player.getVehicle() instanceof Horse)) {
-            player.sendMessage("You must be riding a horse to use this command.");
-            return;
-        }
-
-        Horse horse = (Horse) player.getVehicle();
-        UUID horseUUID = horse.getUniqueId();
-        UUID ownerUUID = horseGuard.getHorseOwner(horseUUID);
-
-        if (ownerUUID == null || !ownerUUID.equals(player.getUniqueId())) {
-            player.sendMessage("You are not the owner of this horse.");
-            return;
-        }
+        Horse horse = helperFunctions.getHorsePlayerOwns(player);
+        if (horse == null) return;
 
         UUID targetUUID = target.getUniqueId();
 
-        if (!horseGuard.isPlayerTrusted(horseUUID, targetUUID)) {
+        if (!helperFunctions.isPlayerTrusted(horse.getUniqueId(), targetUUID)) {
             player.sendMessage(target.getName() + " is not trusted with your horse.");
             return;
         }
 
-        horseGuard.removeTrustedPlayer(horseUUID, targetUUID);
+        helperFunctions.removeTrustedPlayer(horse.getUniqueId(), targetUUID);
         player.sendMessage(target.getName() + " can no longer ride or leash your horse.");
     }
 
     private void handleTrustList(Player player) {
-        if (!(player.getVehicle() instanceof Horse)) {
-            player.sendMessage("You must be riding a horse to use this command.");
-            return;
-        }
+        Horse horse = helperFunctions.getHorsePlayerOwns(player);
+        if (horse == null) return;
 
-        Horse horse = (Horse) player.getVehicle();
-        UUID horseUUID = horse.getUniqueId();
-        UUID ownerUUID = horseGuard.getHorseOwner(horseUUID);
-
-        if (ownerUUID == null || !ownerUUID.equals(player.getUniqueId())) {
-            player.sendMessage("You are not the owner of this horse.");
-            return;
-        }
-
-        HashSet<UUID> trustedPlayers = horseGuard.getTrustedPlayers(horseUUID);
+        List<String> trustedPlayers = helperFunctions.getTrustedPlayerNames(horse);
 
         if (trustedPlayers.isEmpty()) {
             player.sendMessage("No players are trusted with this horse.");
         } else {
-            StringBuilder trustedList = new StringBuilder("Trusted players: ");
-            for (UUID trustedUUID : trustedPlayers) {
-                OfflinePlayer trustedPlayer = Bukkit.getOfflinePlayer(trustedUUID);
-                String name = trustedPlayer.getName();
-                if (name == null) {
-                    name = "Unknown";
-                }
-                trustedList.append(name).append(", ");
-            }
-            player.sendMessage(trustedList.substring(0, trustedList.length() - 2)); // Remove trailing comma
+            String trustedList = String.join(", ", trustedPlayers);
+            player.sendMessage("Trusted players: " + trustedList);
         }
     }
 }
