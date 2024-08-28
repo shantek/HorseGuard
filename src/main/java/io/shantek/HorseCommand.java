@@ -21,12 +21,10 @@ public class HorseCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage("Only players can use this command.");
             return true;
         }
-
-        Player player = (Player) sender;
 
         if (args.length == 0) {
             player.sendMessage("Usage: /horse <trust|untrust|trustlist> [playername]");
@@ -67,12 +65,11 @@ public class HorseCommand implements CommandExecutor {
             return;
         }
 
-        if (!(player.getVehicle() instanceof Horse)) {
+        if (!(player.getVehicle() instanceof Horse horse)) {
             player.sendMessage("You must be riding a horse to use this command.");
             return;
         }
 
-        Horse horse = (Horse) player.getVehicle();
         UUID horseUUID = horse.getUniqueId();
         UUID ownerUUID = horseGuard.getHorseOwner(horseUUID);
 
@@ -82,6 +79,12 @@ public class HorseCommand implements CommandExecutor {
         }
 
         UUID targetUUID = target.getUniqueId();
+
+        // Prevent the owner from trusting themselves
+        if (ownerUUID.equals(targetUUID)) {
+            player.sendMessage("You cannot trust yourself on a horse you own.");
+            return;
+        }
 
         if (horseGuard.isPlayerTrusted(horseUUID, targetUUID)) {
             player.sendMessage(target.getName() + " is already trusted with your horse.");

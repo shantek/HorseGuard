@@ -27,6 +27,7 @@ public class HorseGuard extends JavaPlugin implements Listener {
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
         getCommand("horse").setExecutor(new HorseCommand(this));
+        getCommand("horse").setTabCompleter(new HorseTabCompleter(this)); // Registering the TabCompleter
 
         dataFile = new File(getDataFolder(), "horse_data.yml");
 
@@ -121,8 +122,7 @@ public class HorseGuard extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onEntityTame(EntityTameEvent event) {
-        if (event.getEntity() instanceof Horse) {
-            Horse horse = (Horse) event.getEntity();
+        if (event.getEntity() instanceof Horse horse) {
             Player player = (Player) event.getOwner();
             UUID horseUUID = horse.getUniqueId();
             UUID playerUUID = player.getUniqueId();
@@ -136,17 +136,41 @@ public class HorseGuard extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (event.getRightClicked() instanceof Horse) {
-            Horse horse = (Horse) event.getRightClicked();
+        if (event.getRightClicked() instanceof Horse horse) {
             Player player = event.getPlayer();
             UUID horseUUID = horse.getUniqueId();
             UUID playerUUID = player.getUniqueId();
 
-            if (horseOwners.containsKey(horseUUID)) {
+            // Check if the horse's UUID is already in the plugin's config
+            if (!horseOwners.containsKey(horseUUID)) {
+                // If not, check if the horse is tamed and has an owner according to Minecraft
+                if (horse.isTamed() && horse.getOwner() instanceof Player horseOwner) {
+                    UUID ownerUUID = horseOwner.getUniqueId();
+
+                    // Add the horse to the plugin's config along with the owner's UUID
+                    setHorseOwner(horseUUID, ownerUUID);
+                    player.sendMessage("This horse is owned by " + horseOwner.getName() + " and has now been registered in the system.");
+
+                    // Check if the interacting player is the owner or not
+                    if (!ownerUUID.equals(playerUUID)) {
+                        event.setCancelled(true);
+                        player.sendMessage("This horse is owned by " + horseOwner.getName() + ". You cannot interact with it.");
+                        return;
+                    }
+                } else {
+                    // If the horse isn't tamed or doesn't have an owner, allow interaction (or deny as needed)
+                    player.sendMessage("This horse is not tamed or has no registered owner.");
+                    return;
+                }
+            } else {
+                // If the horse is already in the config, do the usual checks
                 UUID ownerUUID = horseOwners.get(horseUUID);
+
                 if (!ownerUUID.equals(playerUUID) && !isPlayerTrusted(horseUUID, playerUUID)) {
                     event.setCancelled(true);
-                    player.sendMessage("This horse is owned by " + Bukkit.getPlayer(ownerUUID).getName());
+                    Player owner = Bukkit.getPlayer(ownerUUID);
+                    String ownerName = (owner != null) ? owner.getName() : "an unknown player";
+                    player.sendMessage("This horse is owned by " + ownerName + ". You cannot interact with it.");
                 }
             }
         }
@@ -154,13 +178,11 @@ public class HorseGuard extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Horse) {
-            Horse horse = (Horse) event.getEntity();
+        if (event.getEntity() instanceof Horse horse) {
             UUID horseUUID = horse.getUniqueId();
             if (horseOwners.containsKey(horseUUID)) {
                 UUID ownerUUID = horseOwners.get(horseUUID);
-                if (event.getDamager() instanceof Player) {
-                    Player damager = (Player) event.getDamager();
+                if (event.getDamager() instanceof Player damager) {
                     if (!ownerUUID.equals(damager.getUniqueId())) {
                         event.setCancelled(true);
                         damager.sendMessage("This horse is owned by " + Bukkit.getPlayer(ownerUUID).getName());
