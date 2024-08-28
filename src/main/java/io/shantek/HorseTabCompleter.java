@@ -14,10 +14,10 @@ import java.util.UUID;
 
 public class HorseTabCompleter implements TabCompleter {
 
-    private final HorseGuard horseGuard;
+    private final HelperFunctions helperFunctions;
 
     public HorseTabCompleter(HorseGuard horseGuard) {
-        this.horseGuard = horseGuard;
+        this.helperFunctions = new HelperFunctions(horseGuard);
     }
 
     @Override
@@ -26,7 +26,6 @@ public class HorseTabCompleter implements TabCompleter {
             return null; // Only players should use this
         }
 
-        // The command structure: /horse trust <playername> or /horse untrust <playername>
         if (args.length == 1) {
             // Suggest "trust", "untrust", "trustlist" for the first argument
             List<String> subcommands = new ArrayList<>();
@@ -51,14 +50,14 @@ public class HorseTabCompleter implements TabCompleter {
                 }
 
                 UUID horseUUID = horse.getUniqueId();
-                UUID ownerUUID = horseGuard.getHorseOwner(horseUUID);
+                UUID ownerUUID = helperFunctions.getHorseOwner(horseUUID);
 
                 if (ownerUUID == null || !ownerUUID.equals(player.getUniqueId())) {
                     return null; // The player is not the owner
                 }
 
                 List<String> trustedPlayerNames = new ArrayList<>();
-                for (UUID trustedUUID : horseGuard.getTrustedPlayers(horseUUID)) {
+                for (UUID trustedUUID : helperFunctions.getTrustedPlayers(horseUUID)) {
                     OfflinePlayer trustedPlayer = Bukkit.getOfflinePlayer(trustedUUID);
                     String name = trustedPlayer.getName();
                     if (name != null) {

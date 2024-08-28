@@ -7,3 +7,12 @@ commands:
     description: Manages horse trust
     usage: /horse <trust|untrust|trustlist> <playername>
     aliases: [htrust]
+
+permissions:
+  shantek.horseguard.ride:
+    description: Allows the player to ride and lead any horse without ownership.
+    default: op
+  shantek.horseguard.damage:
+    description: Allows the player to damage any horse without ownership.
+    default: op
+
