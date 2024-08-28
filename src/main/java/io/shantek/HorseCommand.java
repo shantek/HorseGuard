@@ -9,7 +9,6 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
-import java.util.List;
 
 public class HorseCommand implements CommandExecutor {
 
@@ -27,7 +26,7 @@ public class HorseCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            player.sendMessage("Usage: /horse <trust|untrust|trustlist> [playername]");
+            player.sendMessage("Usage: /horse <trust|untrust|trustlist|transfer> [playername]");
             return true;
         }
 
@@ -43,8 +42,11 @@ public class HorseCommand implements CommandExecutor {
             case "trustlist":
                 handleTrustList(player);
                 break;
+            case "transfer":
+                handleTransfer(player, args);
+                break;
             default:
-                player.sendMessage("Unknown subcommand. Usage: /horse <trust|untrust|trustlist> [playername]");
+                player.sendMessage("Unknown subcommand. Usage: /horse <trust|untrust|trustlist|transfer> [playername]");
                 break;
         }
 
@@ -117,7 +119,7 @@ public class HorseCommand implements CommandExecutor {
         Horse horse = helperFunctions.getHorsePlayerOwns(player);
         if (horse == null) return;
 
-        List<String> trustedPlayers = helperFunctions.getTrustedPlayerNames(horse);
+        var trustedPlayers = helperFunctions.getTrustedPlayerNames(horse);
 
         if (trustedPlayers.isEmpty()) {
             player.sendMessage("No players are trusted with this horse.");
@@ -125,5 +127,32 @@ public class HorseCommand implements CommandExecutor {
             String trustedList = String.join(", ", trustedPlayers);
             player.sendMessage("Trusted players: " + trustedList);
         }
+    }
+
+    private void handleTransfer(Player player, String[] args) {
+        if (args.length != 2) {
+            player.sendMessage("Usage: /horse transfer <playername>");
+            return;
+        }
+
+        String targetName = args[1];
+        OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
+
+        if (!target.hasPlayedBefore() && !target.isOnline()) {
+            player.sendMessage("Player not found.");
+            return;
+        }
+
+        Horse horse = helperFunctions.getHorsePlayerOwns(player);
+        if (horse == null) return;
+
+        UUID targetUUID = target.getUniqueId();
+
+        // Transfer ownership
+        helperFunctions.setHorseOwner(horse.getUniqueId(), targetUUID);
+        player.sendMessage("You have transferred ownership of the horse to " + target.getName() + ".");
+
+        // Eject the current player from the horse
+        horse.eject();
     }
 }

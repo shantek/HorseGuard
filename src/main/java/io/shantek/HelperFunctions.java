@@ -75,4 +75,10 @@ public class HelperFunctions {
     public HashSet<UUID> getTrustedPlayers(UUID horseUUID) {
         return horseGuard.trustedPlayers.getOrDefault(horseUUID, new HashSet<>());
     }
+
+    public void setHorseOwner(UUID horseUUID, UUID playerUUID) {
+        horseGuard.horseOwners.put(horseUUID, playerUUID);
+        horseGuard.getConfiguration().saveHorseData(); // Save data after modifying
+    }
+
 }
