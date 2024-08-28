@@ -1,0 +1,9 @@
+name: HorseGuard
+version: 0.1.0
+main: io.shantek.HorseGuard
+api-version: 1.20
+commands:
+  horse:
+    description: Manages horse trust
+    usage: /horse <trust|untrust|trustlist> <playername>
+    aliases: [htrust]
