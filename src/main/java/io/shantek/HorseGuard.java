@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.UUID;
 
 public class HorseGuard extends JavaPlugin {
@@ -22,8 +23,8 @@ public class HorseGuard extends JavaPlugin {
     public void onEnable() {
         this.configuration = new Configuration(this);
 
-        getCommand("horse").setExecutor(new HorseCommand(this));
-        getCommand("horse").setTabCompleter(new HorseTabCompleter(this));
+        Objects.requireNonNull(getCommand("horse")).setExecutor(new HorseCommand(this));
+        Objects.requireNonNull(getCommand("horse")).setTabCompleter(new HorseTabCompleter(this));
 
         Bukkit.getPluginManager().registerEvents(new Listeners(this), this);
 
