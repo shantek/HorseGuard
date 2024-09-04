@@ -2,17 +2,22 @@ name: HorseGuard
 version: 0.2.1
 main: io.shantek.HorseGuard
 api-version: 1.20
+
 commands:
   horse:
-    description: Manages horse trust
-    usage: /horse <trust|untrust|trustlist> <playername>
-    aliases: [htrust]
+    description: Manages horse trust and ownership, and administrative tasks.
+    usage: /horse <trust|untrust|trustlist|transfer|reload> <playername>
+    aliases: [hg]
 
 permissions:
   shantek.horseguard.ride:
     description: Allows the player to ride and lead any horse without ownership.
     default: op
+
   shantek.horseguard.damage:
     description: Allows the player to damage any horse without ownership.
     default: op
 
+  shantek.horseguard.reload:
+    description: Allows players to reload HorseGuard's configuration.
+    default: op
