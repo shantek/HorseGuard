@@ -7,3 +7,5 @@
 #
 ######################################
 
+# Prefix of all messages sent to the player
+message-prefix: "&7[&bHorse&6Guard&7] "
