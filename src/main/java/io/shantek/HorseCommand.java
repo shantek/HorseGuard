@@ -80,7 +80,7 @@ public class HorseCommand implements CommandExecutor {
         }
 
         if (helperFunctions.isPlayerTrusted(horse.getUniqueId(), targetUUID)) {
-            player.sendMessage(target.getName() + " is already trusted with your horse.");
+            player.sendMessage(target.getName() + " is already trusted with this horse.");
             return;
         }
 
@@ -151,7 +151,7 @@ public class HorseCommand implements CommandExecutor {
 
         // Transfer ownership
         helperFunctions.setHorseOwner(horse.getUniqueId(), targetUUID);
-        player.sendMessage("You have transferred ownership of the horse to " + target.getName() + ".");
+        player.sendMessage("This horse has been transferred to " + target.getName() + ".");
 
         // Eject the current player from the horse
         horse.eject();
