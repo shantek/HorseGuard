@@ -42,3 +42,14 @@ Players with this permission will be able to ride and lead any horse, ignoring a
 Players with this permission will be able to harm any horse, ignoring any ownership or trust settings.
 
 ![Plugin Usage Stats](https://bstats.org/signatures/bukkit/Horse%20Guard.svg)
+
+## External Links
+
+[Support via Patreon](https://shantek.co/patreon)
+
+[Discord](https://shantek.co/discord)
+
+[Report bugs/make suggestions](https://github.com/shantek/HorseGuard/issues)
+
+### License
+Distributed under the GNU General Public License v3.0.
