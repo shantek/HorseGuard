@@ -50,6 +50,7 @@ public class HorseCommand implements CommandExecutor {
                 break;
             case "reload":
                 pluginReload(player);
+                break;
             default:
                 player.sendMessage(plugin.getMessagePrefix() + "Unknown subcommand. Usage: /horse <trust|untrust|trustlist|transfer> [playername]");
                 break;
