@@ -15,9 +15,11 @@ import java.util.UUID;
 
 public class Listeners implements Listener {
 
+    private final HorseGuard plugin; // Reference to the main plugin
     private final HelperFunctions helperFunctions;
 
     public Listeners(HorseGuard horseGuard) {
+        this.plugin = horseGuard;
         this.helperFunctions = new HelperFunctions(horseGuard);
     }
 
@@ -28,24 +30,10 @@ public class Listeners implements Listener {
             UUID horseUUID = horse.getUniqueId();
             UUID playerUUID = player.getUniqueId();
 
-            // If the horse isn't in the config, check if it has an owner
-            if (helperFunctions.getHorseOwner(horseUUID) == null && horse.isTamed() && horse.getOwner() != null) {
-                // Register the horse and owner in the config
-                Player horseOwner = (Player) horse.getOwner();
-                UUID ownerUUID = horseOwner.getUniqueId();
-                helperFunctions.setHorseOwner(horseUUID, ownerUUID);
-                player.sendMessage("This horse is owned by " + horseOwner.getName() + " and has now been registered.");
-
-                // If the player is not the owner and lacks bypass permissions, deny taming
-                if (!player.hasPermission("shantek.horseguard.ride")) {
-                    event.setCancelled(true);
-                    player.sendMessage("You cannot tame this horse as it is owned by " + horseOwner.getName() + ".");
-                    return;
-                }
-            }
-
+            // Register the horse and player as the owner immediately
+            helperFunctions.setHorseOwner(horseUUID, playerUUID);
             // If the horse is not owned, proceed with taming
-            player.sendMessage("You are now the owner of this horse.");
+            player.sendMessage(plugin.getMessagePrefix() + "You now own this horse. Need to trust another player? Type '/horse trust player' while sitting on the horse.");
         }
     }
 
@@ -63,12 +51,12 @@ public class Listeners implements Listener {
                     if (horse.getOwner() instanceof Player horseOwner) {
                         ownerUUID = horseOwner.getUniqueId();
                         helperFunctions.setHorseOwner(horseUUID, ownerUUID);
-                        player.sendMessage("This horse is owned by " + horseOwner.getName() + " and has now been registered.");
+                        player.sendMessage(plugin.getMessagePrefix() + "This horse is owned by " + horseOwner.getName() + " and has now been registered.");
 
                         // If the player is not the owner and lacks bypass permissions, deny interaction
                         if (!ownerUUID.equals(player.getUniqueId()) && !player.hasPermission("shantek.horseguard.ride")) {
                             event.setCancelled(true);
-                            player.sendMessage("You cannot interact with this horse as it is owned by " + horseOwner.getName() + ".");
+                            player.sendMessage(plugin.getMessagePrefix() + "You cannot interact with this horse as it is owned by " + horseOwner.getName() + ".");
                             return;
                         }
                     } else {
@@ -76,12 +64,12 @@ public class Listeners implements Listener {
                         OfflinePlayer offlineOwner = (OfflinePlayer) horse.getOwner();
                         ownerUUID = offlineOwner.getUniqueId();
                         helperFunctions.setHorseOwner(horseUUID, ownerUUID);
-                        player.sendMessage("This horse is owned by " + getOwnerName(ownerUUID) + " and has now been registered.");
+                        player.sendMessage(plugin.getMessagePrefix() + "This horse is owned by " + getOwnerName(ownerUUID) + " and has now been registered.");
 
                         // If the player is not the owner and lacks bypass permissions, deny interaction
                         if (!ownerUUID.equals(player.getUniqueId()) && !player.hasPermission("shantek.horseguard.ride")) {
                             event.setCancelled(true);
-                            player.sendMessage("You cannot interact with this horse as it is owned by " + getOwnerName(ownerUUID) + ".");
+                            player.sendMessage(plugin.getMessagePrefix() + "You cannot interact with this horse as it is owned by " + getOwnerName(ownerUUID) + ".");
                             return;
                         }
                     }
@@ -100,7 +88,7 @@ public class Listeners implements Listener {
             if (ownerUUID != null && !helperFunctions.isOwner(player, horse) && !helperFunctions.isPlayerTrusted(horseUUID, player.getUniqueId())) {
                 event.setCancelled(true);
                 String ownerName = getOwnerName(ownerUUID);
-                player.sendMessage("This horse is owned by " + ownerName + ". You cannot interact with it.");
+                player.sendMessage(plugin.getMessagePrefix() + "This horse is owned by " + ownerName + ". You cannot interact with it.");
             }
         }
     }
@@ -128,12 +116,12 @@ public class Listeners implements Listener {
                     Player horseOwner = (Player) horse.getOwner();
                     ownerUUID = horseOwner.getUniqueId();
                     helperFunctions.setHorseOwner(horseUUID, ownerUUID);
-                    damager.sendMessage("This horse is owned by " + horseOwner.getName() + " and has now been registered.");
+                    damager.sendMessage(plugin.getMessagePrefix() + "This horse is owned by " + horseOwner.getName() + " and has now been registered.");
 
                     // If the player is not the owner and lacks bypass permissions, deny damage
                     if (!damager.hasPermission("shantek.horseguard.damage")) {
                         event.setCancelled(true);
-                        damager.sendMessage("You cannot damage this horse as it is owned by " + horseOwner.getName() + ".");
+                        damager.sendMessage(plugin.getMessagePrefix() + "You cannot damage this horse as it is owned by " + horseOwner.getName() + ".");
                         return;
                     }
                 }
@@ -147,7 +135,7 @@ public class Listeners implements Listener {
                 if (!ownerUUID.equals(damager.getUniqueId())) {
                     event.setCancelled(true);
                     String ownerName = getOwnerName(ownerUUID);
-                    damager.sendMessage("This horse is owned by " + ownerName + ". You cannot damage it.");
+                    damager.sendMessage(plugin.getMessagePrefix() + "This horse is owned by " + ownerName + ". You cannot damage it.");
                 }
             } else {
                 // If the damager isn't a player, cancel the damage
@@ -155,5 +143,4 @@ public class Listeners implements Listener {
             }
         }
     }
-
 }

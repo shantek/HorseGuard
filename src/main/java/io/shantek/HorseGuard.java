@@ -22,6 +22,7 @@ public class HorseGuard extends JavaPlugin {
     @Override
     public void onEnable() {
         this.configuration = new Configuration(this);
+        reloadHorseGuardConfig();
 
         Objects.requireNonNull(getCommand("horse")).setExecutor(new HorseCommand(this));
         Objects.requireNonNull(getCommand("horse")).setTabCompleter(new HorseTabCompleter(this));
@@ -32,6 +33,7 @@ public class HorseGuard extends JavaPlugin {
 
         int pluginId = 23218;
         Metrics metrics = new Metrics(this, pluginId);
+
     }
 
     @Override
