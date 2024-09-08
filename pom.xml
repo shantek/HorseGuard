@@ -6,7 +6,7 @@
 
     <groupId>io.shantek</groupId>
     <artifactId>HorseGuard</artifactId>
-    <version>0.2.1</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>HorseGuard</name>
