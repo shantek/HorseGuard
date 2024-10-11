@@ -3,7 +3,7 @@ package io.shantek.functions;
 import io.shantek.HorseGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Horse;
+import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -19,8 +19,8 @@ public class HelperFunctions {
         this.horseGuard = horseGuard;
     }
 
-    public Horse getHorsePlayerOwns(Player player) {
-        if (!(player.getVehicle() instanceof Horse horse)) {
+    public AbstractHorse getHorsePlayerOwns(Player player) {
+        if (!(player.getVehicle() instanceof AbstractHorse horse)) {
             player.sendMessage("You must be riding a horse to use this command.");
             return null;
         }
@@ -36,13 +36,13 @@ public class HelperFunctions {
         return horse;
     }
 
-    public boolean isOwner(Player player, Horse horse) {
+    public boolean isOwner(Player player, AbstractHorse horse) {
         UUID horseUUID = horse.getUniqueId();
         UUID ownerUUID = getHorseOwner(horseUUID);
         return ownerUUID != null && ownerUUID.equals(player.getUniqueId());
     }
 
-    public List<String> getTrustedPlayerNames(Horse horse) {
+    public List<String> getTrustedPlayerNames(AbstractHorse horse) {
         UUID horseUUID = horse.getUniqueId();
         HashSet<UUID> trustedPlayers = getTrustedPlayers(horseUUID);
 
@@ -71,6 +71,30 @@ public class HelperFunctions {
             horseGuard.trustedPlayers.get(horseUUID).remove(playerUUID);
             horseGuard.getConfiguration().saveHorseData(); // Save data after modifying
         }
+    }
+
+    public void clearTrustedPlayers(UUID horseUUID) {
+        if (horseGuard.trustedPlayers.containsKey(horseUUID)) {
+            horseGuard.trustedPlayers.get(horseUUID).clear();
+            horseGuard.getConfiguration().saveHorseData(); // Save data after modifying
+        }
+    }
+
+    public String formatEntityType(AbstractHorse entity) {
+        String entityType = entity.getType().name().toLowerCase().replace('_', ' ');
+        String[] words = entityType.split(" ");
+        StringBuilder formattedEntityType = new StringBuilder();
+
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                formattedEntityType.append(Character.toUpperCase(word.charAt(0)))
+                        .append(word.substring(1))
+                        .append(" ");
+            }
+        }
+
+        // Remove the trailing space
+        return formattedEntityType.toString().trim();
     }
 
     public HashSet<UUID> getTrustedPlayers(UUID horseUUID) {

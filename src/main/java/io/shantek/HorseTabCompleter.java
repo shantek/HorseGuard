@@ -6,7 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Horse;
+import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ public class HorseTabCompleter implements TabCompleter {
         }
 
         if (args.length == 1) {
-            // Suggest "trust", "untrust", "trustlist", "transfer" for the first argument
             List<String> subcommands = new ArrayList<>();
             subcommands.add("trust");
             subcommands.add("untrust");
@@ -47,7 +46,7 @@ public class HorseTabCompleter implements TabCompleter {
                 return playerNames;
             } else if (subCommand.equals("untrust")) {
                 // Populate with currently trusted players for "/horse untrust <playername>"
-                if (!(player.getVehicle() instanceof Horse horse)) {
+                if (!(player.getVehicle() instanceof AbstractHorse horse)) {
                     return null; // Player is not riding a horse
                 }
 
