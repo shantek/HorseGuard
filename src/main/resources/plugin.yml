@@ -1,5 +1,5 @@
 name: HorseGuard
-version: 1.0.0
+version: '${project.version}'
 main: io.shantek.HorseGuard
 api-version: 1.20
 
