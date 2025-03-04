@@ -106,4 +106,10 @@ public class HelperFunctions {
         horseGuard.getConfiguration().saveHorseData(); // Save data after modifying
     }
 
+    public void removeHorse(UUID horseUUID) {
+        horseGuard.horseOwners.remove(horseUUID);
+        horseGuard.trustedPlayers.remove(horseUUID);
+        horseGuard.getConfiguration().saveHorseData(); // Save data after modifying
+    }
+
 }

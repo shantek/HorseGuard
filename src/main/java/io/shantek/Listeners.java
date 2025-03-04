@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -82,8 +83,6 @@ public class Listeners implements Listener {
         }
     }
 
-
-
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof AbstractHorse entity && event.getDamager() instanceof Player player) {
@@ -103,6 +102,16 @@ public class Listeners implements Listener {
             }
         }
     }
+    
+    // Event handler for horse death event. When a horse dies, remove it from the database.
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent event) {
+        if (event.getEntity() instanceof AbstractHorse entity) {
+            UUID entityUUID = entity.getUniqueId();
+            helperFunctions.removeHorse(entityUUID);
+        }
+    }
+
 
     private void claimEntity(Player player, LivingEntity entity, UUID entityUUID) {
         UUID playerUUID = player.getUniqueId();
