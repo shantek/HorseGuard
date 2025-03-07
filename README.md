@@ -41,6 +41,9 @@ Players with this permission will be able to ride and lead any horse, ignoring a
 ### shantek.horseguard.damage
 Players with this permission will be able to harm any horse, ignoring any ownership or trust settings.
 
+### shantek.horseguard.reload
+Players with this permission will be able to reload the plugin configuration values.
+
 ![Plugin Usage Stats](https://bstats.org/signatures/bukkit/Horse%20Guard.svg)
 
 ## External Links
