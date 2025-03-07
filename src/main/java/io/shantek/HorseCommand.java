@@ -65,8 +65,13 @@ public class HorseCommand implements CommandExecutor {
     }
 
     private void pluginReload(Player player) {
-        // Reload plugin logic
-        player.sendMessage("Plugin reloaded.");
+        if (!player.hasPermission("shantek.horseguard.reload")) {
+            player.sendMessage(plugin.getMessagePrefix() + "You do not have permission to reload the plugin.");
+            return;
+        }
+
+        plugin.reloadConfig();
+        player.sendMessage(plugin.getMessagePrefix() + "Plugin configuration reloaded.");
     }
 
     private void handleTrust(Player player, String[] args) {

@@ -3,6 +3,7 @@ package io.shantek.functions;
 import io.shantek.HorseGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Player;
 
@@ -110,6 +111,15 @@ public class HelperFunctions {
         horseGuard.horseOwners.remove(horseUUID);
         horseGuard.trustedPlayers.remove(horseUUID);
         horseGuard.getConfiguration().saveHorseData(); // Save data after modifying
+    }
+
+    public boolean isWorldDisabled(World world) {
+        for (String disabledWorld : horseGuard.disabledWorlds) {
+            if (disabledWorld.equalsIgnoreCase(world.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

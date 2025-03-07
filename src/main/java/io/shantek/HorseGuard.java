@@ -14,10 +14,11 @@ public class HorseGuard extends JavaPlugin {
 
     public HashMap<UUID, UUID> horseOwners = new HashMap<>();
     public HashMap<UUID, HashSet<UUID>> trustedPlayers = new HashMap<>();
-    private Configuration configuration;
+    public Configuration configuration;
     public Metrics metrics;
 
-    private String messagePrefix;
+    public String messagePrefix;
+    public HashSet<String> disabledWorlds = new HashSet<>();
 
     @Override
     public void onEnable() {
@@ -51,6 +52,10 @@ public class HorseGuard extends JavaPlugin {
         this.messagePrefix = ChatColor.translateAlternateColorCodes('&', prefixFromConfig);
     }
 
+    public void loadDisabledWorlds() {
+        this.disabledWorlds = new HashSet<>(getConfig().getStringList("disabled-worlds"));
+    }
+
     // Get the message prefix with ChatColor.RESET appended
     public String getMessagePrefix() {
         return messagePrefix + ChatColor.RESET;
@@ -60,5 +65,6 @@ public class HorseGuard extends JavaPlugin {
     public void reloadHorseGuardConfig() {
         reloadConfig();
         loadMessagePrefix();
+        loadDisabledWorlds();
     }
 }
