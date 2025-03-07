@@ -71,6 +71,8 @@ public class HorseCommand implements CommandExecutor {
         }
 
         plugin.reloadConfig();
+        plugin.loadMessagePrefix();
+        plugin.loadDisabledWorlds();
         player.sendMessage(plugin.getMessagePrefix() + "Plugin configuration reloaded.");
     }
 
