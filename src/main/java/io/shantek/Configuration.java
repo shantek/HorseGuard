@@ -12,6 +12,7 @@ public class Configuration {
     private final HorseGuard horseGuard;
     private File dataFile;
     private FileConfiguration dataConfig;
+    private File configFile;
 
     public Configuration(HorseGuard horseGuard) {
         this.horseGuard = horseGuard;
@@ -22,6 +23,12 @@ public class Configuration {
             horseGuard.saveResource("horse_data.yml", false);
         }
         this.dataConfig = YamlConfiguration.loadConfiguration(dataFile);
+
+        this.configFile = new File(horseGuard.getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            configFile.getParentFile().mkdirs();
+            horseGuard.saveResource("config.yml", false);
+        }
     }
 
     public void loadHorseData() {

@@ -30,6 +30,8 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onEntityTame(EntityTameEvent event) {
+        if (helperFunctions.isWorldDisabled(event.getEntity().getWorld()))
+            return;
         if (event.getEntity() instanceof AbstractHorse horse) {
             Player player = (Player) event.getOwner();
             UUID entityUUID = horse.getUniqueId();
@@ -41,6 +43,8 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if (helperFunctions.isWorldDisabled(event.getPlayer().getWorld()))
+            return;
         if (event.getRightClicked() instanceof AbstractHorse entity) {
             if (entity instanceof ZombieHorse) {
                 // Ignore interactions with ZombieHorse
@@ -85,6 +89,8 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
+        if (helperFunctions.isWorldDisabled(event.getEntity().getWorld()))
+            return;
         if (event.getEntity() instanceof AbstractHorse entity && event.getDamager() instanceof Player player) {
 
             if (player.hasPermission("shantek.horseguard.damage")) {
