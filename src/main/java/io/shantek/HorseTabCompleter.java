@@ -33,6 +33,11 @@ public class HorseTabCompleter implements TabCompleter {
             subcommands.add("untrust");
             subcommands.add("trustlist");
             subcommands.add("transfer");
+
+            if (player.hasPermission("shantek.horseguard.reload")) {
+                subcommands.add("reload");
+            }
+
             return subcommands;
         } else if (args.length == 2) {
             String subCommand = args[0].toLowerCase();
