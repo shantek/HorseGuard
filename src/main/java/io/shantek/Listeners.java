@@ -2,6 +2,7 @@ package io.shantek;
 
 import io.shantek.functions.HelperFunctions;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.LivingEntity;
@@ -134,24 +135,49 @@ public class Listeners implements Listener {
         AbstractHorse horse = (player.getVehicle() instanceof AbstractHorse) ? (AbstractHorse) player.getVehicle() : null;
         if (horse == null) return;
 
+        ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+        ItemMeta meta = clickedItem.getItemMeta();
+        if (meta == null || !meta.hasDisplayName()) return;
+
+        String itemName = meta.getDisplayName();
+
         switch (title) {
             case "Horse Management" -> helperFunctions.handleHorseManagementClick(event, player, horse);
-            case "Trust a Player" -> helperFunctions.handleTrustClick(event, player, horse);
-            case "Untrust a Player" -> helperFunctions.handleUntrustClick(event, player, horse);
-            case "Transfer Horse Ownership" -> helperFunctions.handleTransferClick(event, player, horse);
+            case "Trust a Player" -> {
+                if (itemName.equals("Back to Horse Management")) {
+                    helperFunctions.openHorseManagement(player, horse);
+                } else {
+                    helperFunctions.handleTrustClick(event, player, horse);
+                }
+            }
+            case "Untrust a Player" -> {
+                if (itemName.equals("Back to Horse Management")) {
+                    helperFunctions.openHorseManagement(player, horse);
+                } else {
+                    helperFunctions.handleUntrustClick(event, player, horse);
+                }
+            }
+            case "Transfer Horse Ownership" -> {
+                if (itemName.equals("Back to Horse Management")) {
+                    helperFunctions.openHorseManagement(player, horse);
+                } else {
+                    helperFunctions.handleTransferClick(event, player, horse);
+                }
+            }
             case "Confirm Transfer" -> {
-                ItemStack clickedItem = event.getCurrentItem();
-                if (clickedItem == null) return;
-
-                ItemMeta meta = clickedItem.getItemMeta();
-                if (meta == null || !meta.hasDisplayName()) return;
-
-                String targetName = meta.getDisplayName().replace("Transfer to ", "");
-                helperFunctions.handleConfirmTransferClick(event, player, horse, targetName);
+                if (itemName.equals("Cancel")) {
+                    helperFunctions.openTransferMenu(player, horse, 0); // Go back to transfer screen
+                } else if (itemName.startsWith("Transfer to ")) {
+                    String targetName = itemName.replace("Transfer to ", "");
+                    helperFunctions.handleConfirmTransferClick(event, player, horse, targetName);
+                }
             }
         }
     }
-    
+
+
     private void claimEntity(Player player, LivingEntity entity, UUID entityUUID) {
         UUID playerUUID = player.getUniqueId();
         helperFunctions.setHorseOwner(entityUUID, playerUUID);
