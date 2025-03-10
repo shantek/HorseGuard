@@ -24,17 +24,17 @@ public class HorseCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        // Command handling logic
-        // Simulated implementation:
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage("Only players can use this command.");
             return true;
         }
 
-        Player player = (Player) sender;
-
+        // ✅ No arguments = Open the Horse Management GUI
         if (args.length == 0) {
-            player.sendMessage("Usage: /horse <command>");
+            AbstractHorse horse = getRiddenHorse(player);
+            if (horse == null) return true;
+
+            helperFunctions.openHorseManagement(player, horse);
             return true;
         }
 
@@ -77,28 +77,26 @@ public class HorseCommand implements CommandExecutor {
     }
 
     private void handleTrust(Player player, String[] args) {
-        if (args.length < 1) {
+        if (args.length < 2) {
             player.sendMessage("Usage: /horse trust <player>");
             return;
         }
 
-        AbstractHorse entity = getRiddenHorse(player);
-        if (entity == null) return;
+        AbstractHorse horse = getRiddenHorse(player);
+        if (horse == null) return;
 
         String targetName = args[1];
-
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
 
-        // Check if the target player has played on the server before (exists)
         if (target == null || !target.hasPlayedBefore()) {
             player.sendMessage(plugin.getMessagePrefix() + "Invalid player name provided.");
             return;
         }
 
-        UUID horseUUID = entity.getUniqueId();
-
+        UUID horseUUID = horse.getUniqueId();
         helperFunctions.addTrustedPlayer(horseUUID, target.getUniqueId());
-        player.sendMessage(plugin.getMessagePrefix() + targetName + " has been trusted with your " + helperFunctions.formatEntityType(entity) + ".");
+
+        player.sendMessage(plugin.getMessagePrefix() + targetName + " has been trusted with your " + helperFunctions.formatEntityType(horse) + ".");
     }
 
     private void handleUntrust(Player player, String[] args) {
@@ -107,38 +105,35 @@ public class HorseCommand implements CommandExecutor {
             return;
         }
 
-        AbstractHorse entity = getRiddenHorse(player);
-        if (entity == null) return;
+        AbstractHorse horse = getRiddenHorse(player);
+        if (horse == null) return;
 
         String targetName = args[1];
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
 
-        // Check if the target player has played on the server before (exists)
         if (target == null || !target.hasPlayedBefore()) {
             player.sendMessage(plugin.getMessagePrefix() + "Invalid player name provided.");
             return;
         }
 
-        UUID horseUUID = entity.getUniqueId();
-
+        UUID horseUUID = horse.getUniqueId();
         helperFunctions.removeTrustedPlayer(horseUUID, target.getUniqueId());
-        player.sendMessage(plugin.getMessagePrefix() + targetName + " has been untrusted with your " + helperFunctions.formatEntityType(entity));
+
+        player.sendMessage(plugin.getMessagePrefix() + targetName + " has been untrusted with your " + helperFunctions.formatEntityType(horse));
     }
 
     private void handleTrustList(Player player) {
-        AbstractHorse entity = getRiddenHorse(player);
-        if (entity == null) return;
-        UUID horseUUID = entity.getUniqueId();
-        StringBuilder trustList = new StringBuilder(plugin.getMessagePrefix() + "Trusted players for your " + helperFunctions.formatEntityType(entity) + ": ");
+        AbstractHorse horse = getRiddenHorse(player);
+        if (horse == null) return;
 
-        List<String> trustedPlayers = helperFunctions.getTrustedPlayerNames(entity);
+        UUID horseUUID = horse.getUniqueId();
+        StringBuilder trustList = new StringBuilder(plugin.getMessagePrefix() + "Trusted players for your " + helperFunctions.formatEntityType(horse) + ": ");
+
+        List<String> trustedPlayers = helperFunctions.getTrustedPlayerNames(horse);
         if (trustedPlayers.isEmpty()) {
             trustList.append("No trusted players found.");
         } else {
-            trustedPlayers.forEach(name -> trustList.append(name).append(", "));
-            if (trustList.lastIndexOf(", ") != -1) {
-                trustList.setLength(trustList.length() - 2); // Remove last comma and space
-            }
+            trustList.append(String.join(", ", trustedPlayers));
         }
 
         player.sendMessage(trustList.toString());
@@ -156,7 +151,6 @@ public class HorseCommand implements CommandExecutor {
         String targetName = args[1];
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
 
-        // Check if the target player has played on the server before (exists)
         if (target == null || !target.hasPlayedBefore()) {
             player.sendMessage(plugin.getMessagePrefix() + "Invalid player name provided.");
             return;
@@ -165,27 +159,32 @@ public class HorseCommand implements CommandExecutor {
         UUID horseUUID = horse.getUniqueId();
         helperFunctions.clearTrustedPlayers(horseUUID);
         helperFunctions.setHorseOwner(horseUUID, target.getUniqueId());
-        String entityType = horse.getType().name().toLowerCase().replace('_', ' ');
 
+        String entityType = helperFunctions.formatEntityType(horse);
         player.sendMessage(plugin.getMessagePrefix() + "Ownership of your " + entityType + " has been transferred to " + targetName + ".");
         horse.eject();
     }
 
     private AbstractHorse getRiddenHorse(Player player) {
-        if (player.getVehicle() instanceof AbstractHorse horse) {
-            UUID horseUUID = horse.getUniqueId();
-            UUID ownerUUID = helperFunctions.getHorseOwner(horseUUID);
-
-            if (ownerUUID != null && ownerUUID.equals(player.getUniqueId())) {
-                return horse;
-            } else {
-                player.sendMessage(plugin.getMessagePrefix() + "You must be riding a " +
-                        horse.getType().name().toLowerCase().replace('_', ' ') + " that you own to use this command.");
-                return null;
-            }
-        } else {
+        if (!(player.getVehicle() instanceof AbstractHorse horse)) {
             player.sendMessage(plugin.getMessagePrefix() + "You must be riding a horse to use this command.");
             return null;
         }
+
+        UUID horseUUID = horse.getUniqueId();
+        UUID ownerUUID = helperFunctions.getHorseOwner(horseUUID);
+
+        if (ownerUUID == null) {
+            player.sendMessage(plugin.getMessagePrefix() + "This horse is not registered in the system.");
+            return null;
+        }
+
+        if (!ownerUUID.equals(player.getUniqueId())) {
+            OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerUUID);
+            player.sendMessage(plugin.getMessagePrefix() + "This horse belongs to " + (owner.getName() != null ? owner.getName() : "Unknown Owner") + ".");
+            return null;
+        }
+
+        return horse;
     }
 }

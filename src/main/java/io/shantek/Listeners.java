@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTameEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 
@@ -118,6 +119,30 @@ public class Listeners implements Listener {
         }
     }
 
+    // Handle GUI Clicks
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player player)) return;
+        if (event.getClickedInventory() == null) return;
+
+        String title = event.getView().getTitle();
+        event.setCancelled(true);
+
+        AbstractHorse horse = (player.getVehicle() instanceof AbstractHorse) ? (AbstractHorse) player.getVehicle() : null;
+        if (horse == null) return;
+
+        switch (title) {
+            case "Horse Guard - Horse Management" -> helperFunctions.handleHorseManagementClick(event, player, horse);
+            case "Trust a Player" -> helperFunctions.handleTrustClick(event, player, horse);
+            case "Untrust a Player" -> helperFunctions.handleUntrustClick(event, player, horse);
+            case "Transfer Horse Ownership" -> helperFunctions.handleTransferClick(event, player, horse);
+            default -> {
+                if (title.startsWith("Confirm Transfer Horse to ")) {
+                    helperFunctions.handleConfirmTransferClick(event, player, horse, title.replace("Confirm Transfer Horse to ", ""));
+                }
+            }
+        }
+    }
 
     private void claimEntity(Player player, LivingEntity entity, UUID entityUUID) {
         UUID playerUUID = player.getUniqueId();
