@@ -127,11 +127,9 @@ public class Listeners implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
-        if (event.getClickedInventory() == null) return;
+        if (event.getView() == null || event.getClickedInventory() == null) return;
 
         String title = event.getView().getTitle();
-        event.setCancelled(true);
-
         AbstractHorse horse = (player.getVehicle() instanceof AbstractHorse) ? (AbstractHorse) player.getVehicle() : null;
         if (horse == null) return;
 
@@ -143,8 +141,24 @@ public class Listeners implements Listener {
 
         String itemName = meta.getDisplayName();
 
+        // Block item movement for both GUI and Player Inventory
+        if (title.equals("Horse Management") || title.equals("Trust a Player") || title.equals("Untrust a Player") ||
+                title.equals("Transfer Horse Ownership") || title.equals("Confirm Transfer")) {
+            event.setCancelled(true);
+
+            // Block dragging items into/out of inventory
+            if (event.isShiftClick() || event.getClick().isKeyboardClick()) {
+                event.setCancelled(true);
+            }
+            if (event.getClickedInventory() != event.getView().getTopInventory()) {
+                event.setCancelled(true);
+            }
+        }
+
         switch (title) {
-            case "Horse Management" -> helperFunctions.handleHorseManagementClick(event, player, horse);
+            case "Horse Management" -> {
+                helperFunctions.handleHorseManagementClick(event, player, horse);
+            }
             case "Trust a Player" -> {
                 if (itemName.equals("Back to Horse Management")) {
                     helperFunctions.openHorseManagement(player, horse);
