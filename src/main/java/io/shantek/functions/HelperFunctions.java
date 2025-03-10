@@ -11,6 +11,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -132,7 +133,7 @@ public class HelperFunctions {
 
     // Main Horse Management Menu
     public void openHorseManagement(Player player, AbstractHorse horse) {
-        Inventory gui = Bukkit.createInventory(null, 27, "Horse Guard - Horse Management");
+        Inventory gui = Bukkit.createInventory(null, 27, "Horse Management");
 
         gui.setItem(11, createMenuItem(Material.PLAYER_HEAD, "Trust a Player"));
         gui.setItem(13, createMenuItem(Material.BARRIER, "Untrust a Player"));
@@ -146,8 +147,8 @@ public class HelperFunctions {
         Inventory gui = Bukkit.createInventory(null, 54, "Trust a Player");
 
         List<Player> onlinePlayers = Bukkit.getOnlinePlayers().stream()
-                .filter(p -> !p.getUniqueId().equals(player.getUniqueId()))
-                .filter(p -> !isPlayerTrusted(horse.getUniqueId(), p.getUniqueId()))
+                .filter(p -> !p.getUniqueId().equals(player.getUniqueId())) // Exclude self
+                .filter(p -> !isPlayerTrusted(horse.getUniqueId(), p.getUniqueId())) // Exclude already trusted
                 .collect(Collectors.toList());
 
         fillPagedGui(gui, onlinePlayers, page, "Click to trust player", horse);
@@ -159,13 +160,11 @@ public class HelperFunctions {
         Inventory gui = Bukkit.createInventory(null, 54, "Untrust a Player");
 
         List<UUID> trustedUUIDs = getTrustedPlayers(horse.getUniqueId()).stream()
-                .filter(uuid -> !uuid.equals(player.getUniqueId()))
+                .filter(uuid -> !uuid.equals(player.getUniqueId())) // Exclude the owner
                 .collect(Collectors.toList());
 
-        List<Player> trustedPlayers = trustedUUIDs.stream()
+        List<OfflinePlayer> trustedPlayers = trustedUUIDs.stream()
                 .map(Bukkit::getOfflinePlayer)
-                .filter(OfflinePlayer::isOnline)
-                .map(OfflinePlayer -> (Player) OfflinePlayer)
                 .collect(Collectors.toList());
 
         fillPagedGui(gui, trustedPlayers, page, "Untrust this player", horse);
@@ -177,7 +176,7 @@ public class HelperFunctions {
         Inventory gui = Bukkit.createInventory(null, 54, "Transfer Horse Ownership");
 
         List<Player> onlinePlayers = Bukkit.getOnlinePlayers().stream()
-                .filter(p -> !p.getUniqueId().equals(player.getUniqueId()))
+                .filter(p -> !p.getUniqueId().equals(player.getUniqueId())) // Exclude self
                 .collect(Collectors.toList());
 
         fillPagedGui(gui, onlinePlayers, page, "Transfer horse to player", horse);
@@ -186,14 +185,13 @@ public class HelperFunctions {
 
     // Confirmation Menu for Horse Transfer
     public void openConfirmTransfer(Player player, AbstractHorse horse, Player target) {
-        Inventory gui = Bukkit.createInventory(null, 27, "Confirm Transfer Horse to " + target.getName());
+        Inventory gui = Bukkit.createInventory(null, 27, "Confirm Transfer");
 
-        gui.setItem(11, createMenuItem(Material.GREEN_WOOL, "Confirm"));
+        gui.setItem(11, createMenuItem(Material.GREEN_WOOL, "Transfer to " + target.getName()));
         gui.setItem(15, createMenuItem(Material.RED_WOOL, "Cancel"));
 
         player.openInventory(gui);
     }
-
 
     // Handle Main Horse Management Menu Clicks
     public void handleHorseManagementClick(InventoryClickEvent event, Player player, AbstractHorse horse) {
@@ -256,19 +254,29 @@ public class HelperFunctions {
             player.sendMessage("Ownership transferred to " + target.getName() + ".");
             target.sendMessage("You are now the owner of the horse.");
             horse.eject();
-        } else if (clickedItem.getType() == Material.RED_WOOL) {
-            openTransferMenu(player, horse, 0);
         }
+
+        // Ensure proper navigation back to Horse Management
+        openHorseManagement(player, horse);
     }
 
-    // Utility Methods
-    public void fillPagedGui(Inventory gui, List<Player> players, int page, String lore, AbstractHorse horse) {
+
+    private void fillPagedGui(Inventory gui, List<? extends OfflinePlayer> players, int page, String lore, AbstractHorse horse) {
         int startIndex = page * 45;
         int endIndex = Math.min(startIndex + 45, players.size());
 
         for (int i = startIndex; i < endIndex; i++) {
-            Player target = players.get(i);
+            OfflinePlayer target = players.get(i);
             gui.setItem(i - startIndex, createPlayerHead(target.getName(), lore));
+        }
+
+        gui.setItem(49, createMenuItem(Material.BARRIER, "Back to Horse Management"));
+
+        if (page > 0) {
+            gui.setItem(45, createMenuItem(Material.ARROW, "Previous Page"));
+        }
+        if (endIndex < players.size()) {
+            gui.setItem(53, createMenuItem(Material.ARROW, "Next Page"));
         }
     }
 
@@ -282,14 +290,21 @@ public class HelperFunctions {
         return item;
     }
 
+    // Utility function for creating player heads
     public ItemStack createPlayerHead(String playerName, String lore) {
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-        ItemMeta meta = head.getItemMeta();
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
+        SkullMeta meta = (SkullMeta) head.getItemMeta();
+
         if (meta != null) {
             meta.setDisplayName(playerName);
+
             List<String> loreList = new ArrayList<>();
             loreList.add(lore);
             meta.setLore(loreList);
+
+            // Assign player skin to skull
+            meta.setOwningPlayer(Bukkit.getOfflinePlayer(playerName));
+
             head.setItemMeta(meta);
         }
         return head;
