@@ -126,6 +126,17 @@ public class HelperFunctions {
         return false;
     }
 
+    public void notifyTrust(Player player, OfflinePlayer target) {
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+        player.sendTitle("§aTrusted " + target.getName(), "They can now ride your horse!", 10, 40, 10);
+    }
+
+    public void notifyUntrust(Player player, OfflinePlayer target) {
+
+        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+        player.sendTitle("§cUntrusted " + target.getName(), "They can no longer ride your horse.", 10, 40, 10);
+    }
+
     //region Horse Management GUI
 
     // Main Horse Management Menu
@@ -209,14 +220,10 @@ public class HelperFunctions {
         if (target == null) return;
 
         addTrustedPlayer(horse.getUniqueId(), target.getUniqueId());
-
-        // ✅ Add Sound & Title Action
-        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-        player.sendTitle("§aTrusted " + target.getName(), "They can now ride your horse!", 10, 40, 10);
+        notifyTrust(player, target);
 
         openTrustMenu(player, horse, 0);
     }
-
 
     // Handle Untrust Clicks
     public void handleUntrustClick(InventoryClickEvent event, Player player, AbstractHorse horse) {
@@ -229,10 +236,7 @@ public class HelperFunctions {
 
         removeTrustedPlayer(horse.getUniqueId(), target.getUniqueId());
 
-        // ✅ Add Sound & Title Action
-        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
-        player.sendTitle("§cUntrusted " + target.getName(), "They can no longer ride your horse.", 10, 40, 10);
-
+        notifyUntrust(player, target);
         openUntrustMenu(player, horse, 0);
     }
 

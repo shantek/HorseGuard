@@ -97,6 +97,9 @@ public class HorseCommand implements CommandExecutor {
         helperFunctions.addTrustedPlayer(horseUUID, target.getUniqueId());
 
         player.sendMessage(plugin.getMessagePrefix() + targetName + " has been trusted with your " + helperFunctions.formatEntityType(horse) + ".");
+
+        // Send sound and notification
+        helperFunctions.notifyTrust(player, target);
     }
 
     private void handleUntrust(Player player, String[] args) {
@@ -120,6 +123,9 @@ public class HorseCommand implements CommandExecutor {
         helperFunctions.removeTrustedPlayer(horseUUID, target.getUniqueId());
 
         player.sendMessage(plugin.getMessagePrefix() + targetName + " has been untrusted with your " + helperFunctions.formatEntityType(horse));
+
+        // Send sound and notification
+        helperFunctions.notifyUntrust(player, target);
     }
 
     private void handleTrustList(Player player) {
