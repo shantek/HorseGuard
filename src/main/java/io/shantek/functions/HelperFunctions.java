@@ -1,10 +1,7 @@
 package io.shantek.functions;
 
 import io.shantek.HorseGuard;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -212,8 +209,14 @@ public class HelperFunctions {
         if (target == null) return;
 
         addTrustedPlayer(horse.getUniqueId(), target.getUniqueId());
+
+        // ✅ Add Sound & Title Action
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+        player.sendTitle("§aTrusted " + target.getName(), "They can now ride your horse!", 10, 40, 10);
+
         openTrustMenu(player, horse, 0);
     }
+
 
     // Handle Untrust Clicks
     public void handleUntrustClick(InventoryClickEvent event, Player player, AbstractHorse horse) {
@@ -225,8 +228,14 @@ public class HelperFunctions {
         if (target == null) return;
 
         removeTrustedPlayer(horse.getUniqueId(), target.getUniqueId());
+
+        // ✅ Add Sound & Title Action
+        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+        player.sendTitle("§cUntrusted " + target.getName(), "They can no longer ride your horse.", 10, 40, 10);
+
         openUntrustMenu(player, horse, 0);
     }
+
 
     // Handle Transfer Clicks
     public void handleTransferClick(InventoryClickEvent event, Player player, AbstractHorse horse) {
