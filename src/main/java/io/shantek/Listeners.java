@@ -133,6 +133,16 @@ public class Listeners implements Listener {
         AbstractHorse horse = (player.getVehicle() instanceof AbstractHorse) ? (AbstractHorse) player.getVehicle() : null;
         if (horse == null) return;
 
+        // First, block ALL movement in GUI and player inventory
+        boolean isHorseGUI = title.equals("Horse Management") || title.equals("Trust a Player") ||
+                title.equals("Untrust a Player") || title.equals("Transfer Horse Ownership") ||
+                title.equals("Confirm Transfer");
+
+        if (isHorseGUI) {
+            event.setCancelled(true); // Block all interactions
+        }
+
+        // Then, process only valid GUI clicks (ignore inventory item movements)
         ItemStack clickedItem = event.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
@@ -141,24 +151,9 @@ public class Listeners implements Listener {
 
         String itemName = meta.getDisplayName();
 
-        // Block item movement for both GUI and Player Inventory
-        if (title.equals("Horse Management") || title.equals("Trust a Player") || title.equals("Untrust a Player") ||
-                title.equals("Transfer Horse Ownership") || title.equals("Confirm Transfer")) {
-            event.setCancelled(true);
-
-            // Block dragging items into/out of inventory
-            if (event.isShiftClick() || event.getClick().isKeyboardClick()) {
-                event.setCancelled(true);
-            }
-            if (event.getClickedInventory() != event.getView().getTopInventory()) {
-                event.setCancelled(true);
-            }
-        }
-
+        // Handle GUI clicks
         switch (title) {
-            case "Horse Management" -> {
-                helperFunctions.handleHorseManagementClick(event, player, horse);
-            }
+            case "Horse Management" -> helperFunctions.handleHorseManagementClick(event, player, horse);
             case "Trust a Player" -> {
                 if (itemName.equals("Back to Horse Management")) {
                     helperFunctions.openHorseManagement(player, horse);
@@ -190,7 +185,6 @@ public class Listeners implements Listener {
             }
         }
     }
-
 
     private void claimEntity(Player player, LivingEntity entity, UUID entityUUID) {
         UUID playerUUID = player.getUniqueId();
