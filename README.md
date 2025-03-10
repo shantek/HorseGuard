@@ -20,39 +20,42 @@ However, this plugin gives you the ability to trust other players, giving them a
 ## Commands
 The below commands are available to all players on your server, providing you own the horse. You must be sitting on the horse for these commands to work.
 
-### /horse trustlist
-If you own the horse, this will print a list of trusted players for this specific horse.
+>### /horse
+>Access a GUI to manage trusting, untrusting and transferring ownership of your horse.
 
-### /horse trust player
-Replace 'player' with the player name you wish to trust. This will grant them access to ride and lead your horse, but not harm it.
+>### /horse trustlist
+>If you own the horse, this will print a list of trusted players for this specific horse.
 
-### /horse untrust player
-Replace 'player' with the player name you wish to remove trust access for. This will remove any permissions they had to ride and lead your horse.
+>### /horse trust player
+>Replace 'player' with the player name you wish to trust. This will grant them access to ride and lead your horse, but not harm it.
 
-### /horse transfer player
-This will transfer ownership of the horse to the player you specify in the command.
+>### /horse untrust player
+>Replace 'player' with the player name you wish to remove trust access for. This will remove any permissions they had to ride and lead your horse.
+
+>### /horse transfer player
+>This will transfer ownership of the horse to the player you specify in the command.
 
 ## Permissions
 The below permissions are ideal for server mods or staff allowing them to manage player owned horses on your server.
 
-### shantek.horseguard.ride
-Players with this permission will be able to ride and lead any horse, ignoring any ownership or trust settings.
+>### shantek.horseguard.ride
+>Players with this permission will be able to ride and lead any horse, ignoring any ownership or trust settings.
 
-### shantek.horseguard.damage
-Players with this permission will be able to harm any horse, ignoring any ownership or trust settings.
+>### shantek.horseguard.damage
+>Players with this permission will be able to harm any horse, ignoring any ownership or trust settings.
 
-### shantek.horseguard.reload
-Players with this permission will be able to reload the plugin configuration values.
+>### shantek.horseguard.reload
+>Players with this permission will be able to reload the plugin configuration values.
 
 ![Plugin Usage Stats](https://bstats.org/signatures/bukkit/Horse%20Guard.svg)
 
 ## External Links
 
-[Support via Patreon](https://shantek.co/patreon)
+>[Support via Patreon](https://shantek.co/patreon)
 
-[Discord](https://shantek.co/discord)
+>[Discord](https://shantek.co/discord)
 
-[Report bugs/make suggestions](https://github.com/shantek/HorseGuard/issues)
+>[Report bugs/make suggestions](https://github.com/shantek/HorseGuard/issues)
 
 ### License
 Distributed under the GNU General Public License v3.0.
