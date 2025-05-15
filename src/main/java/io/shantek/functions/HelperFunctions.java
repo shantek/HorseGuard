@@ -269,8 +269,6 @@ public class HelperFunctions {
             horse.eject();
         }
 
-        // Ensure proper navigation back to Horse Management
-        openHorseManagement(player, horse);
     }
 
 
