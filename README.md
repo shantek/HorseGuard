@@ -1,7 +1,7 @@
 [![License: GPL](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
 [![Discord](https://img.shields.io/discord/628396916639793152.svg?color=%237289da&label=discord)](https://shantek.co/discord)
 [![CodeFactor](https://www.codefactor.io/repository/github/shantek/horseguard/badge)](https://www.codefactor.io/repository/github/shantek/horseguard)
-![Plugin Usage Stats](https://bstats.org/signatures/bukkit/Horse%20Guard.svg)
+[![Modrinth](https://img.shields.io/badge/Modrinth-Horse%20Guard-green?logo=modrinth)](https://modrinth.com/plugin/horse-guard)
 
 # 🐴 Horse Guard
 
@@ -70,3 +70,7 @@ Protect your tamed horses from theft and griefing while still allowing trusted f
 
 Distributed under the **GNU General Public License v3.0**.  
 See [`LICENSE`](LICENSE) for full details.
+
+---
+
+![Plugin Usage Stats](https://bstats.org/signatures/bukkit/Horse%20Guard.svg)
