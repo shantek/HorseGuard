@@ -1,0 +1,116 @@
+name: HorseGuard – Auto Build & Release with Build Number
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: adopt
+          java-version: 16
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.2
+        with:
+          maven-version: 3.8.1
+
+      - name: Read build number
+        id: build_number
+        run: |
+          BUILD=$(cat build.number)
+          echo "BUILD_NUMBER=$BUILD" >> $GITHUB_ENV
+
+      - name: Check if release already exists
+        id: check_release
+        run: |
+          EXISTS=$(curl -s -H "Authorization: token ${{ secrets.GH_PAT }}" \
+            https://api.github.com/repos/${{ github.repository }}/releases/tags/build-${{ env.BUILD_NUMBER }} | jq -r '.id // empty')
+          if [[ -n "$EXISTS" ]]; then
+            echo "RELEASE_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "RELEASE_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+      - name: Skip if release already exists
+        if: env.RELEASE_EXISTS == 'true'
+        run: |
+          echo "Build #${{ env.BUILD_NUMBER }} already released. Skipping."
+          exit 0
+
+      - name: Build project
+        run: mvn package -B
+
+      - name: Rename .jar to include build number
+        run: |
+          mv ./target/HorseGuard*.jar ./target/HorseGuard-build-${{ env.BUILD_NUMBER }}.jar
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          git fetch --tags
+          LAST_TAG=$(git describe --tags --abbrev=0 $(git rev-list --tags --max-count=1) || echo "")
+          LOG=$(git log $LAST_TAG..HEAD --pretty=format:"- %s")
+          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
+          echo "$LOG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: build-${{ env.BUILD_NUMBER }}
+          name: Release ${{ env.BUILD_NUMBER }}
+          body: ${{ env.CHANGELOG }}
+          draft: false
+          prerelease: false
+          files: ./target/HorseGuard-build-${{ env.BUILD_NUMBER }}.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Notify Discord
+        run: |
+          BUILD_NUMBER=${{ env.BUILD_NUMBER }}
+          FILENAME="HorseGuard-build-${BUILD_NUMBER}.jar"
+          JSON_PAYLOAD=$(jq -n \
+            --arg title "HorseGuard - Release #$BUILD_NUMBER" \
+            --arg desc "${{ env.CHANGELOG }}" \
+            --arg url "https://github.com/${{ github.repository }}/releases/tag/build-${BUILD_NUMBER}" \
+            --arg download "https://github.com/${{ github.repository }}/releases/download/build-${BUILD_NUMBER}/$FILENAME" \
+            --arg filename "$FILENAME" \
+            --arg thumb "https://cdn.modrinth.com/data/LxpOKiIR/fe10c9a40e32f5831156c6c2c5329f1640d8268a_96.webp" \
+            '{
+              "embeds": [{
+                "title": $title,
+                "url": $url,
+                "description": $desc,
+                "color": 7506394,
+                "fields": [
+                  {
+                    "name": "Download",
+                    "value": "[\($filename)](\($download))"
+                  },
+                  {
+                    "name": "Releases",
+                    "value": "[View All Releases](https://www.github.com/shantek/Horse-Guard/releases)"
+                  }
+                ],
+                "thumbnail": { "url": $thumb },
+                "footer": { "text": "Shantek • GitHub Release" },
+                "timestamp": (now | todate)
+              }]
+            }')
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$JSON_PAYLOAD" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
