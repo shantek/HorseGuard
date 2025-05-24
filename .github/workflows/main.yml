@@ -101,7 +101,7 @@ jobs:
                   },
                   {
                     "name": "Releases",
-                    "value": "[View All Releases](https://www.github.com/shantek/Horse-Guard/releases)"
+                    "value": "[View All Releases](https://www.github.com/shantek/HorseGuard/releases)"
                   }
                 ],
                 "thumbnail": { "url": $thumb },
