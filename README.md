@@ -1,61 +1,76 @@
 [![License: GPL](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
-[![Discord](https://img.shields.io/discord/628396916639793152.svg?color=%237289da&label=discord)](https://shantek.co/discord) [![CodeFactor](https://www.codefactor.io/repository/github/shantek/horseguard/badge)](https://www.codefactor.io/repository/github/shantek/horseguard)
+[![Discord](https://img.shields.io/discord/628396916639793152.svg?color=%237289da&label=discord)](https://shantek.co/discord)
+[![CodeFactor](https://www.codefactor.io/repository/github/shantek/horseguard/badge)](https://www.codefactor.io/repository/github/shantek/horseguard)
+[![Modrinth](https://img.shields.io/badge/Modrinth-Horse%20Guard-green?logo=modrinth)](https://modrinth.com/plugin/horse-guard)
 
-#### Looking for the latest dev builds? You can find them [here!](https://shantek.dev/job/HorseGuard/)
+# 🐴 Horse Guard
 
-### Horse Guard offers you the ultimate protection for horses on your Minecraft SMP.
+**The ultimate horse protection plugin for Minecraft SMP servers.**  
+Protect your tamed horses from theft and griefing while still allowing trusted friends to ride and lead them.
 
-Show your support for the Plugin via [PayPal](https://www.paypal.com/donate/?hosted_button_id=7KM6BVLPHSGDC) or [Patreon](https://shantek.co/patreon).
+> ✅ [Get the latest dev builds here →](https://shantek.dev/job/HorseGuard/)
 
-The ultimate horse protection plugin, once you tame a horse it belongs to you and no other players are able to ride, lead or harm your horse.
+---
 
-However, this plugin gives you the ability to trust other players, giving them access to ride and lead your horse, but not harm it. You also have the ability to transfer ownership of the horse to other players.
+## 🔐 Key Features
 
-## How does the plugin work?
+- Horses are automatically protected once tamed.
+- Only the owner can ride, lead, or damage the horse.
+- Owners can trust others to **ride/lead** but not **harm** their horse.
+- Ownership can be transferred to another player.
+- Fully compatible with **Bukkit**, **Spigot**, **Paper**, and **Purpur**.
 
-- Upload the JAR to your Bukkit, Spigot, Paper or Purpur server and reboot
-- Any horses already tamed will be added to the config once it has been interacted with
-- Each new horse you tame will be added to the plugin config and automatically protected
+> ❤️ [Support development via Patreon](https://shantek.co/patreon) or [PayPal](https://www.paypal.com/donate/?hosted_button_id=7KM6BVLPHSGDC)
 
-## Commands
-The below commands are available to all players on your server, providing you own the horse. You must be sitting on the horse for these commands to work.
+---
 
->### /horse
->Access a GUI to manage trusting, untrusting and transferring ownership of your horse.
+## ⚙️ How It Works
 
->### /horse trustlist
->If you own the horse, this will print a list of trusted players for this specific horse.
+1. Upload the HorseGuard JAR to your server’s `/plugins` folder.
+2. Restart your server.
+3. Existing horses will be added to the config once interacted with.
+4. Newly tamed horses are **automatically protected** and logged.
 
->### /horse trust player
->Replace 'player' with the player name you wish to trust. This will grant them access to ride and lead your horse, but not harm it.
+---
 
->### /horse untrust player
->Replace 'player' with the player name you wish to remove trust access for. This will remove any permissions they had to ride and lead your horse.
+## 🐎 Commands
 
->### /horse transfer player
->This will transfer ownership of the horse to the player you specify in the command.
+| Command | Description |
+|---------|-------------|
+| `/horse` | Open the GUI to manage trust, untrust, and ownership transfer. |
+| `/horse trustlist` | View a list of trusted players for your current horse. |
+| `/horse trust <player>` | Trust another player to ride/lead your horse. |
+| `/horse untrust <player>` | Revoke trust from a player. |
+| `/horse transfer <player>` | Transfer horse ownership to another player. |
 
-## Permissions
-The below permissions are ideal for server mods or staff allowing them to manage player owned horses on your server.
+> You **must be riding the horse** to use these commands.
 
->### shantek.horseguard.ride
->Players with this permission will be able to ride and lead any horse, ignoring any ownership or trust settings.
+---
 
->### shantek.horseguard.damage
->Players with this permission will be able to harm any horse, ignoring any ownership or trust settings.
+## 🔐 Permissions
 
->### shantek.horseguard.reload
->Players with this permission will be able to reload the plugin configuration values.
+| Node | Description |
+|------|-------------|
+| `shantek.horseguard.ride` | Allows riding/leading any horse, ignoring trust/ownership. |
+| `shantek.horseguard.damage` | Allows damaging any horse, regardless of ownership. |
+| `shantek.horseguard.reload` | Grants access to reload the plugin config. |
+
+---
+
+## 🌐 External Links
+
+- 💬 [Join Discord](https://shantek.co/discord)
+- 🛠️ [GitHub Repo](https://github.com/shantek/HorseGuard)
+- ✍️ [Report Bugs / Suggest Features](https://github.com/shantek/HorseGuard/issues)
+- ❤️ [Support on Patreon](https://shantek.co/patreon)
+
+---
+
+## 📄 License
+
+Distributed under the **GNU General Public License v3.0**.  
+See [`LICENSE`](LICENSE) for full details.
+
+---
 
 ![Plugin Usage Stats](https://bstats.org/signatures/bukkit/Horse%20Guard.svg)
-
-## External Links
-
->[Support via Patreon](https://shantek.co/patreon)
-
->[Discord](https://shantek.co/discord)
-
->[Report bugs/make suggestions](https://github.com/shantek/HorseGuard/issues)
-
-### License
-Distributed under the GNU General Public License v3.0.
