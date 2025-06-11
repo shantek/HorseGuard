@@ -1,7 +1,11 @@
-[![License: GPL](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
+# ![Shantek Banner](/.github/assets/Banner.png)
+
+---
+[![Modrinth](https://img.shields.io/badge/Modrinth-Download-green?logo=modrinth)](https://modrinth.com/plugin/horse-guard)
 [![Discord](https://img.shields.io/discord/628396916639793152.svg?color=%237289da&label=discord)](https://shantek.co/discord)
 [![CodeFactor](https://www.codefactor.io/repository/github/shantek/horseguard/badge)](https://www.codefactor.io/repository/github/shantek/horseguard)
-[![Modrinth](https://img.shields.io/badge/Modrinth-Horse%20Guard-green?logo=modrinth)](https://modrinth.com/plugin/horse-guard)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/shantek/HorseGuard)
+![GitHub Created At](https://img.shields.io/github/created-at/shantek/HorseGuard)
 
 # 🐴 Horse Guard
 
@@ -20,7 +24,7 @@ Protect your tamed horses from theft and griefing while still allowing trusted f
 - Ownership can be transferred to another player.
 - Fully compatible with **Bukkit**, **Spigot**, **Paper**, and **Purpur**.
 
-> ❤️ [Support development via Patreon](https://shantek.co/patreon) or [PayPal](https://www.paypal.com/donate/?hosted_button_id=7KM6BVLPHSGDC)
+> ❤️ [Support development via Patreon](https://shantek.co/patreon)
 
 ---
 
@@ -67,6 +71,8 @@ Protect your tamed horses from theft and griefing while still allowing trusted f
 ---
 
 ## 📄 License
+
+[![License: GPL](https://img.shields.io/badge/license-GPL-blue.svg)](LICENSE)
 
 Distributed under the **GNU General Public License v3.0**.  
 See [`LICENSE`](LICENSE) for full details.
