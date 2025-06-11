@@ -42,7 +42,7 @@ public class Listeners implements Listener {
             UUID entityUUID = horse.getUniqueId();
             UUID playerUUID = player.getUniqueId();
             helperFunctions.setHorseOwner(entityUUID, playerUUID);
-            player.sendMessage(plugin.getMessagePrefix() + "You tamed a new " + horse.getType().name().toLowerCase() + ".");
+            player.sendMessage(plugin.getMessagePrefix() + "You tamed a new " + helperFunctions.returnMobName(horse) + ".");
         }
     }
 
@@ -75,13 +75,13 @@ public class Listeners implements Listener {
             // No owner, allow the player to claim it
             claimEntity(player, entity, entityUUID);
             entity.setOwner(player); // Set player as the owner of the entity
-            player.sendMessage(plugin.getMessagePrefix() + "You have tamed the " + helperFunctions.formatEntityType(entity) + ".");
+            player.sendMessage(plugin.getMessagePrefix() + "You have tamed the " + helperFunctions.returnMobName(entity) + ".");
             return false;
         } else if (!ownerUUID.equals(player.getUniqueId())) {
             // Check if the player is trusted
             if (!isTrustedPlayer(player.getUniqueId(), entityUUID)) {
                 String ownerName = getOwnerName(ownerUUID);
-                player.sendMessage(plugin.getMessagePrefix() + "This " + helperFunctions.formatEntityType(entity) + " belongs to " + ownerName + ".");
+                player.sendMessage(plugin.getMessagePrefix() + "This " + helperFunctions.returnMobName(entity) + " belongs to " + ownerName + ".");
                 return true;
             } else {
                 return false;
@@ -108,7 +108,7 @@ public class Listeners implements Listener {
                 String ownerName = getOwnerName(ownerUUID);
                 if (!ownerUUID.equals(player.getUniqueId())) {
                     event.setCancelled(true);
-                    player.sendMessage(plugin.getMessagePrefix() + "This " + helperFunctions.formatEntityType(entity) + " belongs to " + ownerName);
+                    player.sendMessage(plugin.getMessagePrefix() + "This " + helperFunctions.returnMobName(entity) + " belongs to " + ownerName);
                 }
             }
         }

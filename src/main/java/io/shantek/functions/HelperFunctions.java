@@ -10,10 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class HelperFunctions {
@@ -26,7 +23,7 @@ public class HelperFunctions {
 
     public AbstractHorse getHorsePlayerOwns(Player player) {
         if (!(player.getVehicle() instanceof AbstractHorse horse)) {
-            player.sendMessage("You must be riding a horse to use this command.");
+            player.sendMessage("You must be riding the animal to use this command.");
             return null;
         }
 
@@ -34,7 +31,7 @@ public class HelperFunctions {
         UUID ownerUUID = getHorseOwner(horseUUID);
 
         if (ownerUUID == null || !ownerUUID.equals(player.getUniqueId())) {
-            player.sendMessage("You are not the owner of this horse.");
+            player.sendMessage("You are not the owner of this " + returnMobName(horse));
             return null;
         }
 
@@ -85,22 +82,6 @@ public class HelperFunctions {
         }
     }
 
-    public String formatEntityType(AbstractHorse entity) {
-        String entityType = entity.getType().name().toLowerCase().replace('_', ' ');
-        String[] words = entityType.split(" ");
-        StringBuilder formattedEntityType = new StringBuilder();
-
-        for (String word : words) {
-            if (!word.isEmpty()) {
-                formattedEntityType.append(Character.toUpperCase(word.charAt(0)))
-                        .append(word.substring(1))
-                        .append(" ");
-            }
-        }
-
-        // Remove the trailing space
-        return formattedEntityType.toString().trim();
-    }
 
     public HashSet<UUID> getTrustedPlayers(UUID horseUUID) {
         return horseGuard.trustedPlayers.getOrDefault(horseUUID, new HashSet<>());
@@ -126,15 +107,15 @@ public class HelperFunctions {
         return false;
     }
 
-    public void notifyTrust(Player player, OfflinePlayer target) {
+    public void notifyTrust(Player player, OfflinePlayer target, AbstractHorse horse) {
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-        player.sendTitle("§aTrusted " + target.getName(), "They can now ride your horse!", 10, 40, 10);
+        player.sendTitle("§aTrusted " + target.getName(), "They can now ride your " + returnMobName(horse) + "!", 10, 40, 10);
     }
 
-    public void notifyUntrust(Player player, OfflinePlayer target) {
+    public void notifyUntrust(Player player, OfflinePlayer target, AbstractHorse horse) {
 
         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
-        player.sendTitle("§cUntrusted " + target.getName(), "They can no longer ride your horse.", 10, 40, 10);
+        player.sendTitle("§cUntrusted " + target.getName(), "They can no longer ride your " +  returnMobName(horse) + ".", 10, 40, 10);
     }
 
     //region Horse Management GUI
@@ -220,7 +201,7 @@ public class HelperFunctions {
         if (target == null) return;
 
         addTrustedPlayer(horse.getUniqueId(), target.getUniqueId());
-        notifyTrust(player, target);
+        notifyTrust(player, target, horse);
 
         openTrustMenu(player, horse, 0);
     }
@@ -236,7 +217,7 @@ public class HelperFunctions {
 
         removeTrustedPlayer(horse.getUniqueId(), target.getUniqueId());
 
-        notifyUntrust(player, target);
+        notifyUntrust(player, target, horse);
         openUntrustMenu(player, horse, 0);
     }
 
@@ -253,6 +234,26 @@ public class HelperFunctions {
         openConfirmTransfer(player, horse, target);
     }
 
+    // Get mob name
+    public String returnMobName(AbstractHorse horse) {
+        return switch (horse.getType()) {
+            case HORSE -> "Horse";
+            case DONKEY -> "Donkey";
+            case MULE -> "Mule";
+            case SKELETON_HORSE -> "Skeleton Horse";
+            case ZOMBIE_HORSE -> "Zombie Horse";
+            default -> formatEntityTypeName(horse.getType().name());
+        };
+    }
+
+    // Helper to format enum names like "SKELETON_HORSE" -> "Skeleton Horse"
+    private String formatEntityTypeName(String name) {
+        return Arrays.stream(name.toLowerCase().split("_"))
+                .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                .collect(Collectors.joining(" "));
+    }
+
+
     // Handle Confirm Transfer Clicks
     public void handleConfirmTransferClick(InventoryClickEvent event, Player player, AbstractHorse horse, String targetName) {
         ItemStack clickedItem = event.getCurrentItem();
@@ -265,7 +266,7 @@ public class HelperFunctions {
             setHorseOwner(horse.getUniqueId(), target.getUniqueId());
             clearTrustedPlayers(horse.getUniqueId());
             player.sendMessage("Ownership transferred to " + target.getName() + ".");
-            target.sendMessage("You are now the owner of the horse.");
+            target.sendMessage("You are now the owner of the " + returnMobName(horse) + ".");
             horse.eject();
         }
 

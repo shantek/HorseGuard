@@ -96,10 +96,10 @@ public class HorseCommand implements CommandExecutor {
         UUID horseUUID = horse.getUniqueId();
         helperFunctions.addTrustedPlayer(horseUUID, target.getUniqueId());
 
-        player.sendMessage(plugin.getMessagePrefix() + targetName + " has been trusted with your " + helperFunctions.formatEntityType(horse) + ".");
+        player.sendMessage(plugin.getMessagePrefix() + targetName + " has been trusted with your " + helperFunctions.returnMobName(horse) + ".");
 
         // Send sound and notification
-        helperFunctions.notifyTrust(player, target);
+        helperFunctions.notifyTrust(player, target, horse);
     }
 
     private void handleUntrust(Player player, String[] args) {
@@ -122,10 +122,10 @@ public class HorseCommand implements CommandExecutor {
         UUID horseUUID = horse.getUniqueId();
         helperFunctions.removeTrustedPlayer(horseUUID, target.getUniqueId());
 
-        player.sendMessage(plugin.getMessagePrefix() + targetName + " has been untrusted with your " + helperFunctions.formatEntityType(horse));
+        player.sendMessage(plugin.getMessagePrefix() + targetName + " has been untrusted with your " + helperFunctions.returnMobName(horse));
 
         // Send sound and notification
-        helperFunctions.notifyUntrust(player, target);
+        helperFunctions.notifyUntrust(player, target, horse);
     }
 
     private void handleTrustList(Player player) {
@@ -133,7 +133,7 @@ public class HorseCommand implements CommandExecutor {
         if (horse == null) return;
 
         UUID horseUUID = horse.getUniqueId();
-        StringBuilder trustList = new StringBuilder(plugin.getMessagePrefix() + "Trusted players for your " + helperFunctions.formatEntityType(horse) + ": ");
+        StringBuilder trustList = new StringBuilder(plugin.getMessagePrefix() + "Trusted players for your " + helperFunctions.returnMobName(horse) + ": ");
 
         List<String> trustedPlayers = helperFunctions.getTrustedPlayerNames(horse);
         if (trustedPlayers.isEmpty()) {
@@ -166,7 +166,7 @@ public class HorseCommand implements CommandExecutor {
         helperFunctions.clearTrustedPlayers(horseUUID);
         helperFunctions.setHorseOwner(horseUUID, target.getUniqueId());
 
-        String entityType = helperFunctions.formatEntityType(horse);
+        String entityType = helperFunctions.returnMobName(horse);
         player.sendMessage(plugin.getMessagePrefix() + "Ownership of your " + entityType + " has been transferred to " + targetName + ".");
         horse.eject();
     }
