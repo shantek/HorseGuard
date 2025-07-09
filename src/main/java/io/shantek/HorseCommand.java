@@ -181,8 +181,15 @@ public class HorseCommand implements CommandExecutor {
         UUID ownerUUID = helperFunctions.getHorseOwner(horseUUID);
 
         if (ownerUUID == null) {
-            player.sendMessage(plugin.getMessagePrefix() + "This horse is not registered in the system.");
-            return null;
+            if (horse.isTamed()) {
+                // Auto-register to the rider
+                helperFunctions.setHorseOwner(horseUUID, player.getUniqueId());
+                player.sendMessage(plugin.getMessagePrefix() + "This " + helperFunctions.returnMobName(horse) + " has been registered to you.");
+                ownerUUID = player.getUniqueId();
+            } else {
+                player.sendMessage(plugin.getMessagePrefix() + "This horse is not registered in the system.");
+                return null;
+            }
         }
 
         if (!ownerUUID.equals(player.getUniqueId())) {
