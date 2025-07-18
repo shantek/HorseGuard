@@ -16,6 +16,12 @@ Protect your tamed horses from theft and griefing while still allowing trusted f
 
 ---
 
+## 🎥 YouTube Tutorial
+
+[![YouTube](http://i.ytimg.com/vi/MhoEPSdi2QQ/hqdefault.jpg)](https://www.youtube.com/watch?v=MhoEPSdi2QQ)
+
+---
+
 ## 🔐 Key Features
 
 - Horses are automatically protected once tamed.
