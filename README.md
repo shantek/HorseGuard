@@ -12,13 +12,11 @@
 **The ultimate horse protection plugin for Minecraft SMP servers.**  
 Protect your tamed horses from theft and griefing while still allowing trusted friends to ride and lead them.
 
-> ✅ [Get the latest dev builds here →](https://shantek.dev/job/HorseGuard/)
-
 ---
 
 ## 🎥 YouTube Tutorial
 
-[![YouTube](http://i.ytimg.com/vi/MhoEPSdi2QQ/hqdefault.jpg)](https://www.youtube.com/watch?v=MhoEPSdi2QQ)
+[![YouTube](http://i.ytimg.com/vi/DfKzi22by08/hqdefault.jpg)](https://www.youtube.com/watch?v=DfKzi22by08)
 
 ---
 
